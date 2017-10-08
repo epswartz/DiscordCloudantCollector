@@ -8,7 +8,7 @@
     "start": "node index.js"
   },
   "author": "eswartzen@gmail.com",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "bunyan": "^1.8.12",
     "circular-json": "^0.3.1",
