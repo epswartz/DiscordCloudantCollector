@@ -59,7 +59,7 @@ client.on('message', message => {
             message.channel.send('pong');
         }else{
             log.info({message: m},"Recieved Message");
-            db.insert(m, (insertErr, body)=> {
+            db.insert(m, m.timestamp.toString(), (insertErr, body)=> {
                 if(insertErr){
                     log.error({err: insertErr}, "Unable to insert message into cloudant");
                 }else{

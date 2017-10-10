@@ -11,6 +11,8 @@ Grabs messages sent to a discord server and drops them into a cloudant database.
 5. If you want better looking logs, `npm install bunyan -g`
 6. `npm start`, or if you have bunyan, `npm start | bunyan`
 
+Alternatively, you can give the bot your own discord token and clientID, and it will log the messages that you see (and it will also make you appear as always online while it's running, so that's a little awkward).
+
 ## Config Example
 
 ~~~
