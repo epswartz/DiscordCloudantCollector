@@ -4,7 +4,7 @@
 
 
 const Discord = require('discord.js');
-const fs = require('fs');
+const write = require('write');
 const cJSON = require('circular-json');
 const client = new Discord.Client();
 const cfg = require('./config.js');
@@ -33,6 +33,10 @@ client.on('message', message => {
         // Extract the parts of the message we care about.
         var m = {
             timestamp: Date.now(),
+            guild: {
+                id: message.guild.id,
+                name: message.guild.name
+            },
             channel: {
                 id: message.channel.id,
                 name: message.channel.name
@@ -59,13 +63,17 @@ client.on('message', message => {
             message.channel.send('pong');
         }else{
             log.info({message: m},"Recieved Message");
-            db.insert(m, m.timestamp.toString(), (insertErr, body)=> {
-                if(insertErr){
-                    log.error({err: insertErr}, "Unable to insert message into cloudant");
-                }else{
-                    log.info({message: m}, "Inserted message into cloudant");
-                }
-            });
+            if(cfg.mode === 'cloudant'){
+                db.insert(m, m.timestamp.toString(), (insertErr, body)=> {
+                    if(insertErr){
+                        log.error({err: insertErr}, "Unable to insert message into cloudant");
+                    }else{
+                        log.info({message: m}, "Inserted message into cloudant");
+                    }
+                });
+            }else if(cfg.mode === 'file'){
+                write(cfg.file + '/' + m.guild.name + '/' + m.channel.name + '/' + m.timestamp + '.json', JSON.stringify(m));
+            }
         }
     }
 });
