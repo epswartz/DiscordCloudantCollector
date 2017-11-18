@@ -1,17 +1,19 @@
-//jshint esversion:6, node:true
+// jshint esversion:6, node:true
 // <('_')> Ethan S
-"use strict";
+'use strict';
 
 
 const Discord = require('discord.js');
 const write = require('write');
-const cJSON = require('circular-json');
+// const cJSON = require('circular-json');
 const client = new Discord.Client();
 const cfg = require('./config.js');
+var express = require('express');
+
 
 // Bunyan Setup
 const bunyan = require('bunyan');
-var log = bunyan.createLogger({name: "CollectorBot"});
+var log = bunyan.createLogger({name: 'CollectorBot'});
 
 // Cloudant Setup
 const cloudant = require('cloudant');
@@ -23,11 +25,11 @@ const db = nano.use(cfg.cloudant.database);
 
 
 client.on('ready', () => {
-    log.info("Collector has logged in!");
+    log.info('Collector has logged in!');
 });
 
 client.on('message', message => {
-    if(message.author && message.author.id !== cfg.discord.id){ // The bot doesn't see messages from itself.
+    if (message.author && message.author.id !== cfg.discord.id) { // The bot doesn't see messages from itself.
 
         // Extract the parts of the message we care about.
         var m = {
@@ -47,27 +49,30 @@ client.on('message', message => {
             }
         };
         if(message.content && message.content.length > 0){
-            m.type = "text";
+            m.type = 'text';
             m.content = message.content;
         }else if(message.content && message.content.length === 0){
-            m.type = "image";
+            m.type = 'image';
         }else{
-            log.warn("Message of unknown type");
-            m.type = "unknown";
+            log.warn('Message of unknown type');
+            m.type = 'unknown';
         }
 
 
         if (m.content === '!ping') {
-            log.info({author: m.author}, "Recieved status query, sending reply");
+            log.info({author: m.author}, 'Recieved status query, sending reply');
             message.channel.send('pong');
+        }else if(m.content === '!bing'){
+            log.info({author: m.author}, 'Recieved status query, sending reply');
+            message.channel.send('bong');
         }else{
-            log.info({message: m},"Recieved Message");
+            log.info({message: m}, 'Recieved Message');
             if(cfg.mode === 'cloudant'){
-                db.insert(m, m.timestamp.toString(), (insertErr, body)=> {
+                db.insert(m, m.timestamp.toString(), (insertErr)=> {
                     if(insertErr){
-                        log.error({err: insertErr}, "Unable to insert message into cloudant");
+                        log.error({err: insertErr}, 'Unable to insert message into cloudant');
                     }else{
-                        log.info({message: m}, "Inserted message into cloudant");
+                        log.info({message: m}, 'Inserted message into cloudant');
                     }
                 });
             }else if(cfg.mode === 'file'){
@@ -78,3 +83,11 @@ client.on('message', message => {
 });
 
 client.login(cfg.discord.token);
+
+var app = express();
+
+app.get('/', function(req, res) {
+  res.send('Status- Alive. I made this route so that BM could tell that the app was alive :)');
+});
+
+app.listen(8080);
