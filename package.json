@@ -1,6 +1,6 @@
 {
   "name": "disc_scripts",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Some discord scripts I'm playing around with",
   "main": "index.js",
   "scripts": {
