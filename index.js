@@ -1,5 +1,5 @@
 //jshint esversion:6, node:true
-// <('_')>
+// <('_')> Ethan S
 "use strict";
 
 
@@ -23,8 +23,7 @@ const db = nano.use(cfg.cloudant.database);
 
 
 client.on('ready', () => {
-    console.log('Collector has logged in!');
-    console.log("-------------------------------------------");
+    log.info("Collector has logged in!");
 });
 
 client.on('message', message => {
@@ -57,7 +56,7 @@ client.on('message', message => {
             m.type = "unknown";
         }
 
-        
+
         if (m.content === '!ping') {
             log.info({author: m.author}, "Recieved status query, sending reply");
             message.channel.send('pong');
